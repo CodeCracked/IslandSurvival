@@ -1,0 +1,5 @@
+name: IslandSurvival
+version: ${project.version}
+main: me.codecracked.island.IslandPlugin
+author: CodeCracked
+api-version: 1.16
