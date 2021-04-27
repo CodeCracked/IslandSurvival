@@ -10,10 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class BlockPlace implements Listener
+public class DebugEvents implements Listener
 {
     private IslandPlugin plugin;
-    public BlockPlace(IslandPlugin plugin)
+    public DebugEvents(IslandPlugin plugin)
     {
         this.plugin = plugin;
     }

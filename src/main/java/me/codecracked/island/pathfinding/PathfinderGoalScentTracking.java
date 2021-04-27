@@ -7,7 +7,7 @@ import net.minecraft.server.v1_16_R3.PathfinderGoal;
 
 public class PathfinderGoalScentTracking extends PathfinderGoal
 {
-    public static boolean ENABLED = false;
+    public static boolean ENABLED = true;
 
     private EntityTrackingWolf entity;
     private ScentMarker currentScentTarget;
