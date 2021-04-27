@@ -18,9 +18,10 @@ public class ScentManager
 {
     public static final int SCENT_TRAIL_SIZE = 1024;
     public static final int SCENT_TRAIL_PERIOD = 10;
-    public static final double SCENT_ITEM_DISTANCE = 7.5;
+    public static final double SCENT_ITEM_DISTANCE = 16;
     public static final float MAX_SCENT_DISTANCE_SQR = 32 * 32;
-    public static final int MUDDY_PROTECTION_TICKS = 3000;
+    public static final int MUD_TICKS_PER_DIRT = 200;
+    public static final int MAX_MUD = 2400;
 
     private class ScentTrail
     {
@@ -54,7 +55,7 @@ public class ScentManager
     }
     private class ScentState
     {
-        public int lastMuddyTime;
+        public int mudExpireTime;
     }
 
     private static ScentManager instance;
@@ -87,21 +88,17 @@ public class ScentManager
         {
             for (Player player : plugin.getServer().getOnlinePlayers())
             {
-                ScentState scentState = playerScentStates.get(player);
+                ScentState scentState = playerScentStates.get(player.getUniqueId());
                 if (scentState == null)
                 {
                     scentState = new ScentState();
                     playerScentStates.put(player.getUniqueId(), scentState);
                 }
 
-                if (scentState.lastMuddyTime > 0)
+                if (scentState.mudExpireTime > 0)
                 {
-                    if (timer - scentState.lastMuddyTime <= MUDDY_PROTECTION_TICKS) continue;
-                    else
-                    {
-                        scentState.lastMuddyTime = 0;
-                        playerScentStates.put(player.getUniqueId(), scentState);
-                    }
+                    scentState.mudExpireTime--;
+                    continue;
                 }
 
                 tryPlaceScentMarker_Singleton(player);
@@ -125,13 +122,13 @@ public class ScentManager
     {
         return instance.timer;
     }
-    public static void tryPlaceScentMarker(Player player)
-    {
-        instance.tryPlaceScentMarker_Singleton(player);
-    }
     public static ScentMarker getNextScentTarget(Location location, UUID target, ScentMarker lastFoundTarget)
     {
         return instance.getNextScentTarget_Singleton(location, target, lastFoundTarget);
+    }
+    public static void addMudToPlayer(Player player)
+    {
+        instance.addMudToPlayer_Singleton(player);
     }
     public static ItemStack addScentToItem(ItemStack item, Player player)
     {
@@ -153,7 +150,7 @@ public class ScentManager
 
     private void tryPlaceScentMarker_Singleton(Player player)
     {
-        ScentTrail scentTrail = scentTrails.get(player);
+        ScentTrail scentTrail = scentTrails.get(player.getUniqueId());
         if (scentTrail == null) scentTrail = new ScentTrail(SCENT_TRAIL_SIZE);
         scentTrail.addMarker(player.getLocation());
         scentTrails.put(player.getUniqueId(), scentTrail);
@@ -163,5 +160,13 @@ public class ScentManager
         ScentTrail scentTrail = scentTrails.get(target);
         if (scentTrail == null) return null;
         else return scentTrail.getNextTarget(location, lastFoundTarget);
+    }
+    private void addMudToPlayer_Singleton(Player player)
+    {
+        ScentState scentState = playerScentStates.get(player.getUniqueId());
+        if (scentState == null) scentState = new ScentState();
+
+        scentState.mudExpireTime = Math.min(MAX_MUD, scentState.mudExpireTime + MUD_TICKS_PER_DIRT);
+        playerScentStates.put(player.getUniqueId(), scentState);
     }
 }

@@ -25,10 +25,10 @@ public class EntityTrackingWolf extends EntityWolf
     @Override
     protected void initPathfinder()
     {
-        //super.initPathfinder();
+        super.initPathfinder();
         this.goalSelector.a(2, new PathfinderGoalScentTracking(this));
     }
-
+    
     public void setCurrentTarget(UUID target)
     {
         currentTarget = target;
