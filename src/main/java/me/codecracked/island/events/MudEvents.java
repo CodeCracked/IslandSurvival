@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-public class PlayerInteract implements Listener
+public class MudEvents implements Listener
 {
     @EventHandler
     public void playerInteract(PlayerInteractEvent event)
@@ -27,8 +27,16 @@ public class PlayerInteract implements Listener
                 ItemStack mainHand = player.getInventory().getItemInMainHand();
                 ItemStack offHand = player.getInventory().getItemInOffHand();
 
-                if (mainHand.getType() == Material.DIRT && mainHand.getAmount() > 0) applyMud(player, mainHand);
-                else if (offHand.getType() == Material.DIRT && mainHand.getAmount() > 0) applyMud(player, offHand);
+                if (mainHand.getType() == Material.DIRT && mainHand.getAmount() > 0)
+                {
+                    applyMud(player, mainHand);
+                    event.setCancelled(true);
+                }
+                else if (offHand.getType() == Material.DIRT && mainHand.getAmount() > 0)
+                {
+                    applyMud(player, offHand);
+                    event.setCancelled(true);
+                }
             }
         }
     }

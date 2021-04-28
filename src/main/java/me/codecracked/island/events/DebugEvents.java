@@ -1,6 +1,5 @@
 package me.codecracked.island.events;
 
-import me.codecracked.island.IslandPlugin;
 import me.codecracked.island.entities.EntityTrackingWolf;
 import me.codecracked.island.pathfinding.PathfinderGoalScentTracking;
 import net.minecraft.server.v1_16_R3.WorldServer;
@@ -12,12 +11,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class DebugEvents implements Listener
 {
-    private IslandPlugin plugin;
-    public DebugEvents(IslandPlugin plugin)
-    {
-        this.plugin = plugin;
-    }
-
     @EventHandler
     public void onPlace(BlockPlaceEvent event)
     {

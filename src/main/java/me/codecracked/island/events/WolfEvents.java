@@ -1,21 +1,36 @@
 package me.codecracked.island.events;
 
 import me.codecracked.island.entities.EntityTrackingWolf;
-import net.minecraft.server.v1_16_R3.ItemStack;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.UUID;
 
-public class InteractWithEntity implements Listener
+public class WolfEvents implements Listener
 {
-    public static final boolean ALLOW_OWNER_TRACKING = true;
+    public static final boolean ALLOW_OWNER_TRACKING = false;
+
+    @EventHandler
+    public void entitySpawn(EntitySpawnEvent event)
+    {
+        Entity nmsEntity = ((CraftEntity)event.getEntity()).getHandle();
+        if (nmsEntity instanceof EntityTrackingWolf) return;
+        else if (nmsEntity instanceof EntityWolf)
+        {
+            EntityTrackingWolf trackingWolf = new EntityTrackingWolf(event.getEntity(), nmsEntity);
+            WorldServer world = ((CraftWorld)event.getLocation().getWorld()).getHandle();
+            world.addEntity(trackingWolf);
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void interactWithEntity(PlayerInteractEntityEvent event)
@@ -39,7 +54,7 @@ public class InteractWithEntity implements Listener
                     {
                         UUID scent = stack.getTag().a("Scent" + i);
                         i++;
-                        if ((scent.equals(wolf.getOwnerUUID()) && !ALLOW_OWNER_TRACKING) || scent.equals(wolf.getCurrentTarget())) continue;
+                        if (scent.equals(wolf.getOwnerUUID()) && !ALLOW_OWNER_TRACKING) continue;
 
                         wolf.setCurrentTarget(scent);
                         event.setCancelled(true);

@@ -11,6 +11,7 @@ public class PathfinderGoalScentTracking extends PathfinderGoal
 
     private EntityTrackingWolf entity;
     private ScentMarker currentScentTarget;
+    private int cooldown;
 
     public PathfinderGoalScentTracking(EntityTrackingWolf entity)
     {
@@ -22,9 +23,16 @@ public class PathfinderGoalScentTracking extends PathfinderGoal
     {
         if (!ENABLED) return false;
         if (!entity.isTamed() || entity.isSitting() || entity.getCurrentTarget() == null) return false;
-        if (currentScentTarget != null && currentScentTarget.distanceToSqr(entity.getBukkitEntity().getLocation()) > 25) return false;
+
+        if (currentScentTarget != null && currentScentTarget.distanceToSqr(entity.getBukkitEntity().getLocation()) < 25) cooldown = 0;
+        if (cooldown > 0)
+        {
+            cooldown--;
+            return false;
+        }
 
         currentScentTarget = ScentManager.getNextScentTarget(entity.getBukkitEntity().getLocation(), entity.getCurrentTarget(), currentScentTarget);
+        cooldown = 10;
         return currentScentTarget != null;
     }
 
