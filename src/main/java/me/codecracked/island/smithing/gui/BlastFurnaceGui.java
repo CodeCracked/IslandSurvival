@@ -1,13 +1,11 @@
 package me.codecracked.island.smithing.gui;
 
 import me.codecracked.island.gui.AbstractInventoryGui;
+import me.codecracked.island.smithing.SmithingManager;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class BlastFurnaceGui extends AbstractInventoryGui
 {
@@ -16,31 +14,6 @@ public class BlastFurnaceGui extends AbstractInventoryGui
 
     private static final int ORE_SLOT = 0;
     private static final int STEEL_SLOT = 4;
-    private static ItemStack STEEL = new ItemStack(Material.IRON_INGOT, 1);
-    private static ItemStack PERFECT_STEEL = new ItemStack(Material.IRON_INGOT, 1);
-    private static ItemStack WEAK_STEEL = new ItemStack(Material.IRON_INGOT, 1);
-    private static ItemStack COMPROMISED_STEEL = new ItemStack(Material.IRON_INGOT, 1);
-
-    static
-    {
-        ItemMeta meta = STEEL.getItemMeta();
-        meta.setDisplayName("Steel Ingot");
-        STEEL.setItemMeta(meta);
-
-        meta = PERFECT_STEEL.getItemMeta();
-        meta.setDisplayName("Perfect Steel Ingot");
-        meta.addEnchant(Enchantment.DURABILITY, 0, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        PERFECT_STEEL.setItemMeta(meta);
-
-        meta = WEAK_STEEL.getItemMeta();
-        meta.setDisplayName("Weak Steel Ingot");
-        WEAK_STEEL.setItemMeta(meta);
-
-        meta = COMPROMISED_STEEL.getItemMeta();
-        meta.setDisplayName("Compromised Steel Ingot");
-        COMPROMISED_STEEL.setItemMeta(meta);
-    }
 
     private long smeltingTime;
 
@@ -170,8 +143,9 @@ public class BlastFurnaceGui extends AbstractInventoryGui
     private void updateSteelState(int smeltingState)
     {
         if (smeltingState < 4) getInventory().clear(STEEL_SLOT);
-        else if (smeltingState < 7) setItem(STEEL_SLOT, WEAK_STEEL);
-        else if (smeltingState == 7) setItem(STEEL_SLOT, PERFECT_STEEL);
-        else setItem(STEEL_SLOT, COMPROMISED_STEEL);
+        else if (smeltingState < 6) setItem(STEEL_SLOT, SmithingManager.WEAK_STEEL);
+        else if (smeltingState == 6) setItem(STEEL_SLOT, SmithingManager.STEEL);
+        else if (smeltingState == 7) setItem(STEEL_SLOT, SmithingManager.PERFECT_STEEL);
+        else setItem(STEEL_SLOT, SmithingManager.COMPROMISED_STEEL);
     }
 }

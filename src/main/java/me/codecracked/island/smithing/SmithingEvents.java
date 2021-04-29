@@ -41,7 +41,7 @@ public class SmithingEvents implements Listener
     }
     private void rightClickAnvil(Player player, Location location)
     {
-
+        SmithingManager.useAnvil(player, location);
     }
     private void rightClickCauldron(Player player, Location location)
     {
