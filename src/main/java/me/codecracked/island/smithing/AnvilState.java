@@ -1,6 +1,7 @@
 package me.codecracked.island.smithing;
 
 import me.codecracked.island.IslandPlugin;
+import me.codecracked.island.scent.ScentManager;
 import net.minecraft.server.v1_16_R3.EntityItem;
 import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public class AnvilState
         AnvilState state = new AnvilState(player, anvil);
 
         ItemStack playerHand = player.getInventory().getItemInMainHand();
-        ItemStack singleItem = playerHand.clone();
+        ItemStack singleItem = ScentManager.stripScentsFromItem(playerHand.clone());
         singleItem.setAmount(1);
 
         if (playerHand == null || playerHand.getAmount() == 0) return null;
@@ -122,24 +123,25 @@ public class AnvilState
         else player.getWorld().playSound(player.getLocation(), "minecraft:block.anvil.destroy", SoundCategory.PLAYERS, 1.0f, 1.0f);
 
         hammersLeft--;
-        if (hammersLeft == 0)
-        {
-            WorldServer worldServer = ((CraftWorld)anvil.getWorld()).getHandle();
-            worldServer.removeEntity(itemPreview);
-
-            net.minecraft.server.v1_16_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(getResult());
-            EntityItem result = new EntityItem(worldServer, anvil.getBlockX() + 0.5, anvil.getBlockY() + 1, anvil.getBlockZ() + 0.5, nmsStack);
-            result.setMot(0, 0, 0);
-            result.setPickupDelay(0);
-            worldServer.addEntity(result);
-
-            this.bossBar.setVisible(false);
-            this.bossBar.removeAll();
-
-            SmithingManager.anvilFinished(this.anvil);
-        }
+        if (hammersLeft == 0) finish();
 
         return true;
+    }
+    public void finish()
+    {
+        WorldServer worldServer = ((CraftWorld)anvil.getWorld()).getHandle();
+        worldServer.removeEntity(itemPreview);
+
+        net.minecraft.server.v1_16_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(getResult());
+        EntityItem result = new EntityItem(worldServer, anvil.getBlockX() + 0.5, anvil.getBlockY() + 1, anvil.getBlockZ() + 0.5, nmsStack);
+        result.setMot(0, 0, 0);
+        result.setPickupDelay(2);
+        worldServer.addEntity(result);
+
+        this.bossBar.setVisible(false);
+        this.bossBar.removeAll();
+
+        SmithingManager.anvilFinished(this.anvil);
     }
 
     private ItemStack getResult()

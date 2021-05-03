@@ -8,8 +8,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Random;
+
 public final class IslandPlugin extends JavaPlugin
 {
+    public static final Random RANDOM = new Random();
     public static final boolean DEBUG_MODE = true;
 
     public static IslandPlugin instance;

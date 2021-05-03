@@ -147,6 +147,16 @@ public class ScentManager
         nmsStack.setTag(nbt);
         return CraftItemStack.asBukkitCopy(nmsStack);
     }
+    public static ItemStack stripScentsFromItem(ItemStack item)
+    {
+        net.minecraft.server.v1_16_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound nbt = nmsStack.hasTag() ? nmsStack.getTag() : new NBTTagCompound();
+
+        int i = 1;
+        while (nbt.hasKey("Scent" + i)) nbt.remove("Scent" + i);
+        nmsStack.setTag(nbt);
+        return CraftItemStack.asBukkitCopy(nmsStack);
+    }
 
     private void tryPlaceScentMarker_Singleton(Player player)
     {

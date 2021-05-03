@@ -2,8 +2,10 @@ package me.codecracked.island.gui;
 
 import me.codecracked.island.IslandPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,9 +45,18 @@ public abstract class AbstractInventoryGui implements Listener
         visibleToPlayers.add(player);
         onOpen();
     }
+    public void dropItems(Location location)
+    {
+        for (int slot : getDroppableSlots())
+        {
+            ItemStack stack = inventory.getItem(slot);
+            if (stack != null && stack.getAmount() != 0) location.getWorld().dropItemNaturally(location, stack);
+        }
+    }
 
     //region Abstraction
     protected abstract void initializeItems();
+    protected int[] getDroppableSlots() { return new int[0]; }
     /**
      * @return Whether to cancel the click event
      */

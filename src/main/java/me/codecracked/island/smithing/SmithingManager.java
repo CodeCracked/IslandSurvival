@@ -26,6 +26,13 @@ public class SmithingManager
     public static ItemStack STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
     public static ItemStack PERFECT_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
 
+    public static ItemStack HARDENED_USELESS_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
+    public static ItemStack HARDENED_RUINED_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
+    public static ItemStack HARDENED_COMPROMISED_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
+    public static ItemStack HARDENED_WEAK_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
+    public static ItemStack HARDENED_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
+    public static ItemStack HARDENED_PERFECT_STEEL_PLATE = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 1);
+
     static
     {
         setItemName(COMPROMISED_STEEL, "Compromised Steel Ingot");
@@ -40,8 +47,16 @@ public class SmithingManager
         setItemName(STEEL_PLATE, "Steel Plate");
         setItemName(PERFECT_STEEL_PLATE, "Perfect Steel Plate");
 
+        setItemName(HARDENED_USELESS_STEEL_PLATE, "Hardened Useless Steel Plate");
+        setItemName(HARDENED_RUINED_STEEL_PLATE, "Hardened Ruined Steel Plate");
+        setItemName(HARDENED_COMPROMISED_STEEL_PLATE, "Hardened Compromised Steel Plate");
+        setItemName(HARDENED_WEAK_STEEL_PLATE, "Hardened Weak Steel Plate");
+        setItemName(HARDENED_STEEL_PLATE, "Hardened Steel Plate");
+        setItemName(HARDENED_PERFECT_STEEL_PLATE, "Hardened Perfect Steel Plate");
+
         addGlint(PERFECT_STEEL);
         addGlint(PERFECT_STEEL_PLATE);
+        addGlint(HARDENED_PERFECT_STEEL_PLATE);
     }
     private static void setItemName(ItemStack stack, String name)
     {
@@ -59,6 +74,7 @@ public class SmithingManager
 
     private static Map<Location, BlastFurnaceGui> blastFurnaceGuis = new HashMap<>();
     private static Map<Location, AnvilState> anvils = new HashMap<>();
+    private static Map<Location, CauldronState> cauldrons = new HashMap<>();
 
     public static void openBlastFurnace(Player player, Location location)
     {
@@ -70,6 +86,16 @@ public class SmithingManager
         }
         gui.showGui(player);
     }
+    public static void breakBlastFurnace(Player player, Location location)
+    {
+        BlastFurnaceGui gui = blastFurnaceGuis.get(location);
+        if (gui != null)
+        {
+            gui.dropItems(location);
+            blastFurnaceGuis.remove(location);
+        }
+    }
+
     public static void useAnvil(Player player, Location location)
     {
         AnvilState anvilState = anvils.get(location);
@@ -93,5 +119,36 @@ public class SmithingManager
     public static void anvilFinished(Location location)
     {
         anvils.remove(location);
+    }
+    public static void breakAnvil(Player player, Location location)
+    {
+        AnvilState anvilState = anvils.get(location);
+        if (anvilState != null) anvilState.finish();
+    }
+
+    public static void useCauldron(Player player, Location location)
+    {
+        CauldronState cauldronState = cauldrons.get(location);
+        if (cauldronState != null)
+        {
+            if (!cauldronState.tryFinish(player)) player.sendMessage("That cauldron is in use!");
+            return;
+        }
+
+        cauldronState = CauldronState.createCauldronStateForPlayer(player, location);
+        if (cauldronState == null) return;
+
+        cauldrons.put(location, cauldronState);
+        player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
+        cauldronState.startMinigame();
+    }
+    public static void cauldronFinished(Location location)
+    {
+        cauldrons.remove(location);
+    }
+    public static void breakCauldron(Player player, Location location)
+    {
+        CauldronState cauldronState = cauldrons.get(location);
+        if (cauldronState != null) cauldronState.finish();
     }
 }

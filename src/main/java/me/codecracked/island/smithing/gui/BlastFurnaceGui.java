@@ -31,6 +31,11 @@ public class BlastFurnaceGui extends AbstractInventoryGui
         setItem(16, Material.GREEN_STAINED_GLASS_PANE);
         setItem(17, Material.RED_STAINED_GLASS_PANE);
     }
+    @Override
+    protected int[] getDroppableSlots()
+    {
+        return new int[] { ORE_SLOT, STEEL_SLOT };
+    }
 
     @Override
     protected void onOpen()
